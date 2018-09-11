@@ -1,6 +1,19 @@
 <?php
 /* Functions to modify parent theme for TRU portfolios
-                                                                 */
+
+                                                              */
+
+# -----------------------------------------------------------------
+# Theme Setup
+# -----------------------------------------------------------------
+
+add_action( 'after_setup_theme', 'twu_minds_setup');
+
+function twu_minds_setup() {
+	
+	//register support for portfolio features
+	add_theme_support( 'twu-portfolio' );
+}
 
 
 # -----------------------------------------------------------------
@@ -78,9 +91,147 @@ function twu_minds_entry_footer() {
 }
 
 # -----------------------------------------------------------------
+# General TWU Portfolio Stuff
+# -----------------------------------------------------------------
+
+
+/* Clean up the +New menu to put "Artifacts" at top, remove "Media" / "User"
+   Add a custom menu for TWU (hard wired for now)                            */
+   
+function twu_portfolio_adminbar() {
+
+	// admin bar needs to be known globally
+	global $wp_admin_bar;
+	
+	// remove all items from New Content menu
+	$wp_admin_bar->remove_node('new-post');
+	$wp_admin_bar->remove_node('new-media');
+	$wp_admin_bar->remove_node('new-page');
+	$wp_admin_bar->remove_node('new-user');
+	
+	// add back the new Post link
+	$args = array(
+		'id'     => 'new-post',    
+		'title'  => 'Blog Post', 
+		'parent' => 'new-content',
+		'href'  => admin_url( 'post-new.php' ),
+		'meta'  => array( 'class' => 'ab-item' )
+	);
+	$wp_admin_bar->add_node( $args );
+
+	// add back the new Page 
+	$args = array(
+		'id'     => 'new-page',    
+		'title'  => 'Page', 
+		'parent' => 'new-content',
+		'href'  => admin_url( 'post-new.php?post_type=page' ),
+		'meta'  => array( 'class' => 'ab-item' )
+	);
+	$wp_admin_bar->add_node( $args );
+
+
+	// add a top menu for the TWU Create links
+	$args = array(
+		'id'    => 'twu-portfolio',
+		'title' => 'TWU Create',
+		'href'  => 'https://create.twu.ca/',
+		'meta'  => array(
+			'title' => __('TWU Create'),            
+		),
+	);
+	
+	$wp_admin_bar->add_menu( $args );
+
+	$args = array(
+		'id'    => 'portfolio',
+		'parent' => 'twu-portfolio',
+		'title' => 'E-Portfolio Help',
+		'href'  => 'http://create.twu.ca/eportfolios',
+		'meta'  => array(
+			'title' => __('TWU E-Portfolio information and documentation'),
+			'target' => '_blank',
+			'class' => ''
+		),
+	);
+	
+	$wp_admin_bar->add_menu( $args );
+
+	$args = array(
+		'id'    => 'wordpress-guide',
+		'parent' => 'twu-portfolio',
+		'title' => 'WordPress Guide',
+		'href'  => 'http://create.twu.ca/eportfolios/wordpress/',
+		'meta'  => array(
+			'title' => __('TWU Eportfolio WordPress Guide'),
+			'target' => '_blank',
+			'class' => ''
+		),
+	);
+	
+	$wp_admin_bar->add_menu( $args );
+
+	$args = array(
+		'id'    => 'wordpress-glossary',
+		'parent' => 'twu-portfolio',
+		'title' => 'WordPress Glossary',
+		'href'  => 'https://www.wpglossary.net/',
+		'meta'  => array(
+			'title' => __('Definitions of words that you come in contact with when you use WordPress'),
+			'target' => '_blank',
+			'class' => ''
+		),
+	);
+
+	$wp_admin_bar->add_menu( $args );
+	
+		
+	$args = array(
+		'id'    => 'theme-guide',
+		'parent' => 'twu-portfolio',
+		'title' => 'TWU Minds Theme',
+		'href'  => 'http://create.twu.ca/eportfolios/portfolio-themes/twu-minds/',
+		'meta'  => array(
+			'title' => __('Using the TWU Minds theme'),
+			'target' => '_blank',
+			'class' => ''
+		),
+	);
+	
+	$wp_admin_bar->add_menu( $args );
+}
+
+add_action( 'wp_before_admin_bar_render', 'twu_portfolio_adminbar', 99 );
+
+function twu_portfolio_dashboard_widgets() {
+	wp_add_dashboard_widget('twu_portfolio_admin', 'Your TWU Portfolio', 'twu_portfolio_make_dashboard_widget');
+}
+
+function twu_portfolio_make_dashboard_widget() {
+	echo '<p>There are currently <strong>' . twu_artifact_count() . '</strong> artifacts in your portfolio.</p>
+	<ul>
+		<li><a href="' . get_post_type_archive_link( 'twu-portfolio' ) . '" target="_blank">See all artifacts</a><li>
+		<li><a href="' . admin_url( 'edit.php?post_type=twu-portfolio') . '">Manage your artifacts</a></li>	
+		<li><a href="' . admin_url( 'post-new.php?post_type=twu-portfolio') . '">Create a new artifact</a></li>
+	
+	 </ul>';
+}
+
+add_action('wp_dashboard_setup', 'twu_portfolio_dashboard_widgets');
+
+function twu_artifact_count() {
+	return wp_count_posts('twu-portfolio')->publish;
+}
+
+
+
+
+# -----------------------------------------------------------------
 # Misc Stuff
 # useful wrenches and hammers
 # -----------------------------------------------------------------
+
+// Load enhancement file to display admin notices.
+require get_stylesheet_directory() . '/inc/twu-minds-enhancements.php';
 
 
 ?>
