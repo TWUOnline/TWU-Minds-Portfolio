@@ -2,7 +2,7 @@
 Theme Name: 	TWU Minds Portfolio
 Theme URI: 		https://github.com/TWUOnline/TWU-Minds-Portfolio
 Description: 	An elegant text oriented theme (Child of Radcliffe 2) for Trinity Western University Students to create a learning portfolio. 
-Version: 		0.3
+Version: 		0.5
 Template:       radcliffe-2-wpcom
 Author: 		CogDog
 Author URI: 	https://cog.dog/
@@ -10,4 +10,10 @@ License: GNU General Public License v2.0 & Apache License 2.0
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 */
+
+.archive-description {
+    margin: 1em 2em;
+    line-height: 1.3;
+    font-size: 0.8em;
+}
 

@@ -8,7 +8,7 @@
  */
 
 // Get number of projects to display (hardwired for now)
-$portfolio_items_number = 3;
+$portfolio_items_number = twu_minds_front_artifact_count();
 
 $args = array(
 	'post_type'      => 'twu-portfolio',
@@ -67,7 +67,16 @@ $portfolio_query = new WP_Query ( $args );
 	<?php if ( $portfolio_query -> have_posts() ) : ?>
 	
 		<div class="entry-content">
-			<h2 class="entry-header"><?php echo $portfolio_items_number?> Most Recent Artifacts</h2>
+		
+			<header class="page-header">
+				<h2 class="entry-header"><?php twu_minds_front_artifact_title()?></h2>
+	
+		
+				<div class="archive-description">
+					<?php twu_minds_portfolio_tagline()?>
+				</div>
+			</header><!-- .page-header -->
+		
 		</div>
 
 	<div class="archive">
@@ -85,6 +94,27 @@ $portfolio_query = new WP_Query ( $args );
 			?>
 	
 	</div>
+	
+	<?php else:?>
+	
+		<?php if ( current_user_can( 'publish_posts' ) ) : ?>
+
+
+			<div class="entry-content">
+				<h2 class="entry-header"><?php _e( 'No Artifacts Found', 'radcliffe-2' ); ?></h2>
+
+				<p>
+					<?php printf( esc_html__( 'This section will display your ' . $portfolio_items_number . ' latest artifacts.', 'radcliffe-2' ) ); ?><br />
+					<?php printf( wp_kses( __( 'Ready to publish your first artifact? <a href="%1$s">Get started here</a>.', 'radcliffe-2' ), array( 'a' => array( 'href' => array() ) ) ), esc_url( admin_url( 'post-new.php?post_type=twu-portfolio' ) ) ); ?>
+				</p>
+			</div>
+
+
+	<?php endif; ?>
+
+	
+	
+	
 	<?php endif?>
 
 
